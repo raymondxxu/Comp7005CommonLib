@@ -7,24 +7,34 @@ import Socket
 
 public enum ArgParserError: Error {
     case PortNumberError
-    case ServerIPError
+    case SenderIPError
+    case missingSenderIPError
+    case receiverIPError
+    case missingReceiverIPError
     case noFileNameFoundError
+}
+
+fileprivate enum ProgramType {
+    case sender
+    case receiver
+    case proxy
 }
 
 public class ArgParser {
 
     public private(set) var portNumber: UInt16?
-    public private(set) var serverIp: NSString?
-    public private(set) var serverDir: String?
+    public private(set) var senderIp: NSString?
+    public private(set) var receiverIp: NSString?
     public private(set) var targetFileNames: Set<String>
-    private var server: Bool
+    private var type: ProgramType
 
-    public static let shared = ArgParser(server: false)
-    public static let serverShared = ArgParser(server: true)
+    public static let senderArgParser = ArgParser(type: .sender)
+    public static let receiverArgParser = ArgParser(type: .receiver)
+    public static let proxyArgParser = ArgParser(type: .proxy)
 
-    private init(server:Bool) {
+    private init(type: ProgramType) {
+        self.type = type
         targetFileNames = Set<String>()
-        self.server = server
     }
 
     public func parse() throws {
@@ -37,39 +47,59 @@ public class ArgParser {
             }
         } else {
             args.filter {
-                        $0.hasSuffix(".txt")
-                    }
-                    .forEach {
-                        targetFileNames.insert($0)
-                    }
+                $0.hasSuffix(".txt")
+             } .forEach {
+                targetFileNames.insert($0)
+            }
         }
 
 
         for i in 0..<args.count {
+            //CommandLine arguments for port number
             if args[i] == "-p" {
                 if let pn = UInt16(args[i + 1]) {
                     portNumber = pn
                 } else {
                     throw ArgParserError.PortNumberError
                 }
-            } else if args[i] == "-s" {
-                serverIp = args[i + 1] as NSString
-                if let ip = serverIp {
+            } else if args[i] == "-s" { //CommandLine arguments for senderIp
+                senderIp = args[i + 1] as NSString
+                if let ip = senderIp {
                     var socketAddr = sockaddr_in()
                     let ipCStr = ip.cString(using: String.Encoding.ascii.rawValue)
                     guard inet_pton(AF_INET, ipCStr!, &socketAddr.sin_addr) == 1 else {
-                        throw ArgParserError.ServerIPError
+                        throw ArgParserError.SenderIPError
                     }
                 }
-            } else if args[i] == "-d" {
-                serverDir = args[i + 1]
+            } else if args[i] == "-r" { //CommandLine arguments for rec'
+                receiverIp = args[i + 1] as NSString
+                if let ip = receiverIp {
+                    var socketAddr = sockaddr_in()
+                    let ipCStr = ip.cString(using: String.Encoding.ascii.rawValue)
+                    guard inet_pton(AF_INET, ipCStr!, &socketAddr.sin_addr) == 1 else {
+                        throw ArgParserError.receiverIPError
+                    }
+                }
+
             }
         }
-        if targetFileNames.isEmpty && !server{
-            throw ArgParserError.noFileNameFoundError
-        }
-        if serverIp == nil && !server{
-            throw  ArgParserError.ServerIPError
+        switch type {
+            case .sender:
+                if receiverIp == nil {
+                    throw ArgParserError.missingSenderIPError
+                }
+            case .receiver:
+                if senderIp == nil {
+                    throw ArgParserError.missingReceiverIPError
+                }
+            case .proxy:
+                if senderIp == nil {
+                    throw ArgParserError.missingReceiverIPError
+                }
+                if receiverIp == nil {
+                    throw ArgParserError.missingSenderIPError
+                }
+            
         }
     }
 
