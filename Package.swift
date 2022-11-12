@@ -12,14 +12,16 @@ let package = Package(
             targets: ["CommonLib"]),
     ],
     dependencies: [
-        .package(path: "../Socket")
+        .package(url: "https://github.com/raymondxxu/Comp7005FinalProjectSocket", branch: "main")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "CommonLib",
-            dependencies: ["Socket"]),
+            dependencies: [
+                .product(name: "Socket", package: "Comp7005FinalProjectSocket")
+            ]),
         .testTarget(
             name: "CommonLibTests",
             dependencies: ["CommonLib"]),
