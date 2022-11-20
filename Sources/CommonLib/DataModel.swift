@@ -11,7 +11,7 @@ public struct DataModel {
     public private (set) var data: String
     public private (set) var id: UInt
 
-    public init(seq:UInt, type: Type, data: String) {
+    public init(seq:UInt, type: ModelType, data: String) {
         self.id = seq
         self.type = type 
         self.data = data
