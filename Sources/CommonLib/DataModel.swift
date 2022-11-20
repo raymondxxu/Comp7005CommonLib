@@ -7,7 +7,7 @@ public enum ModelType: String, Codable{
 
 public protocol JsonStringConvertible {
     
-    func convert(from json: String) -> JsonStringConvertible?
+    static func convert(from json: String) -> JsonStringConvertible?
     func convert() -> String? 
 
 }
@@ -46,7 +46,7 @@ extension DataModel: CustomStringConvertible {
 
 extension DataModel: JsonStringConvertible {
     
-    public func convert(from json: String) -> JsonStringConvertible? {
+    public static func convert(from json: String) -> JsonStringConvertible? {
         let decoder = JSONDecoder()
         return try? decoder.decode(DataModel.self, from: Data(json.utf8))
     }
