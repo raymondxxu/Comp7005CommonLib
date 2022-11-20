@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "comp7005finalprojectsocket",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/raymondxxu/Comp7005FinalProjectSocket",
+      "state" : {
+        "branch" : "main",
+        "revision" : "c697263dd2785d331a9c42f6b34007cfe0a596c2"
+      }
+    }
+  ],
+  "version" : 2
+}
