@@ -12,7 +12,7 @@ public protocol JsonStringConvertible {
 
 }
 
-public struct DataModel {
+public struct DataModel: Hashable {
     
     public private (set) var type: ModelType
     public private (set) var data: String?
