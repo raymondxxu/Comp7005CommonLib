@@ -64,7 +64,7 @@ public class ArgParser {
                 } else {
                     throw ArgParserError.PortNumberError
                 }
-            } else if args[i] == "rp" {
+            } else if args[i] == "-rp" {
                 if let pn = UInt16(args[i + 1]) {
                     receiverPortNumber = pn
                 } else {
