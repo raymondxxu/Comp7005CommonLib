@@ -12,6 +12,7 @@ public enum ArgParserError: Error {
     case receiverIPError
     case missingReceiverIPError
     case noFileNameFoundError
+    case receiverPortNumberError
 }
 
 fileprivate enum ProgramType {
@@ -22,6 +23,7 @@ fileprivate enum ProgramType {
 
 public class ArgParser {
 
+    public private(set) var receiverPortNumber: UInt16?
     public private(set) var portNumber: UInt16?
     public private(set) var senderIp: NSString?
     public private(set) var receiverIp: NSString?
@@ -62,6 +64,12 @@ public class ArgParser {
                 } else {
                     throw ArgParserError.PortNumberError
                 }
+            } else if args[i] == "rp" {
+                if let pn = UInt16(args[i + 1]) {
+                    receiverPortNumber = pn
+                } else {
+                    throw ArgParserError.PortNumberError
+                }
             } else if args[i] == "-s" { //CommandLine arguments for senderIp
                 senderIp = args[i + 1] as NSString
                 if let ip = senderIp {
@@ -88,11 +96,19 @@ public class ArgParser {
                 if receiverIp == nil {
                     throw ArgParserError.missingSenderIPError
                 }
+                if portNumber == nil {
+                    throw ArgParserError.PortNumberError
+                }
             case .receiver:
-                break
+                if portNumber == nil {
+                    throw ArgParserError.PortNumberError
+                }
             case .proxy:
-                if senderIp == nil {
-                    throw ArgParserError.missingReceiverIPError
+                if portNumber == nil {
+                    throw ArgParserError.PortNumberError
+                }
+                if receiverPortNumber == nil {
+                    throw ArgParserError.receiverPortNumberError
                 }
                 if receiverIp == nil {
                     throw ArgParserError.missingSenderIPError
