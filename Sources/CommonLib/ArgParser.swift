@@ -89,9 +89,7 @@ public class ArgParser {
                     throw ArgParserError.missingSenderIPError
                 }
             case .receiver:
-                if senderIp == nil {
-                    throw ArgParserError.missingReceiverIPError
-                }
+                break
             case .proxy:
                 if senderIp == nil {
                     throw ArgParserError.missingReceiverIPError
