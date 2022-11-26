@@ -94,7 +94,7 @@ public class ArgParser {
         switch type {
             case .sender:
                 if receiverIp == nil {
-                    throw ArgParserError.missingSenderIPError
+                    throw ArgParserError.missingReceiverIPError
                 }
                 if portNumber == nil {
                     throw ArgParserError.PortNumberError
